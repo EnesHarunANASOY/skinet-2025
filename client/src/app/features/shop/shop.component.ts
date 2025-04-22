@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Product } from '../../shared/product';
+import { Product } from '../../shared/models/product';
 import { ShopService } from '../../core/services/shop.service';
 import { MatCardModule } from '@angular/material/card';
 import { ProductItemComponent } from "./product-item/product-item.component";
@@ -9,9 +9,9 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatListOption, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
-import { ShopParams } from '../../shared/shopParams';
+import { ShopParams } from '../../shared/models/shopParams';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
-import { Pagination } from '../../shared/pagination';
+import { Pagination } from '../../shared/models/pagination';
 import { FormsModule } from '@angular/forms';
 
 @Component({
