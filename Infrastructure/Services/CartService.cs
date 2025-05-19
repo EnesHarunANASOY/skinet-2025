@@ -19,6 +19,8 @@ public class CartService(IConnectionMultiplexer redis) : ICartService
     {
         var data = await _database.StringGetAsync(key);
 
+        Console.WriteLine("data is :", data);
+
         return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<ShoppingCart>(data!);
     }
 
