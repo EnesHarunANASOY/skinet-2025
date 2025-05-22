@@ -7,7 +7,7 @@ using Product = Core.Entities.Product;
 
 namespace Infrastructure.Services;
 
-public class PaymentService(IConfiguration config, ICartService cartService, IGenericRepository<Product> productRepo,IGenericRepository<DeliveryMethod> dmRepo) : IPaymentService
+public class PaymentService(IConfiguration config, ICartService cartService, /*IGenericRepository<Product> productRepo,IGenericRepository<DeliveryMethod> dmRepo*/ IUnitOfWork unit) : IPaymentService
 {
     public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
     {
@@ -18,23 +18,18 @@ public class PaymentService(IConfiguration config, ICartService cartService, IGe
 
         var shippingPrice = 0m;
 
-        Console.WriteLine("Delivery method Id is: ", cart.DeliveryMethodId);
-
         if(cart.DeliveryMethodId.HasValue)
         {
-            var deliveryMethod = await dmRepo.GetByIdAsync((int)cart.DeliveryMethodId);
-            Console.WriteLine("Delviery Method is : ", deliveryMethod);
+            var deliveryMethod = await unit.Repository<DeliveryMethod>().GetByIdAsync((int)cart.DeliveryMethodId);
 
             if(deliveryMethod==null) return null;
 
             shippingPrice = deliveryMethod.Price;
         }
 
-        Console.WriteLine("ShippingPrice is : ", shippingPrice);
-
         foreach (var item in cart.Items)
         {
-            var productItem = await productRepo.GetByIdAsync(item.ProductId);
+            var productItem = await unit.Repository<Product>().GetByIdAsync(item.ProductId);
             if(productItem == null) return null;
 
             if(item.Price!= productItem.Price)

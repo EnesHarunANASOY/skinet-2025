@@ -14,7 +14,7 @@ public interface IGenericRepository<T> where T : BaseEntity
     void Add(T entity);
     void Update(T entity);
     void Remove(T entity);
-    Task<bool> SaveAllAsync();
+    //Task<bool> SaveAllAsync();  UNITOFWORK'DEN SONRA KALDIRDIK. ÇÜNKÜ KENDİ İÇİNDE COMPLETE OLAYI VAR
     bool Exists(int id);
     Task<int> CountAsync(ISpecification<T> spec);
 }
