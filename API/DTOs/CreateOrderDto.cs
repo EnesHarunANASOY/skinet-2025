@@ -11,8 +11,9 @@ public class CreateOrderDto
     [Required]
     public int DeliveryMethodId { get; set; }
     [Required]
-    public ShippingAddress ShippingAddress { get; set; }
+    public ShippingAddress ShippingAddress { get; set; } = null!;
     [Required]
-    public PaymentSummary PaymentSummary { get; set; }
+    public PaymentSummary PaymentSummary { get; set; } = null!;
+    public decimal Discount { get; set; }
 
 }
