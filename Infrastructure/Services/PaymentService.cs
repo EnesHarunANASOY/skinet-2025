@@ -6,15 +6,23 @@ using Product = Core.Entities.Product;
 
 namespace Infrastructure.Services;
 
-public class PaymentService(IConfiguration config, ICartService cartService, /*IGenericRepository<Product> productRepo,IGenericRepository<DeliveryMethod> dmRepo*/ IUnitOfWork unit) : IPaymentService
+public class PaymentService : IPaymentService
 {
+    private readonly ICartService cartService;
+    private readonly IUnitOfWork unit;
+
+    public PaymentService(IConfiguration config, ICartService cartService, /*IGenericRepository<Product> productRepo,IGenericRepository<DeliveryMethod> dmRepo*/ IUnitOfWork unit)
+    {
+        StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
+        this.cartService = cartService;
+        this.unit = unit;
+    }
+
     public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
     {
-        StripeConfiguration.ApiKey= config["StripeSettings:SecretKey"];
-
         var cart = await cartService.GetCartAsync(cartId) ?? throw new Exception("Cart Unavailable");
         var shippingPrice = await GetShippingPriceAsync(cart) ?? 0;
-        
+
         //Checks if the item's price has changed in the cart
         foreach (var item in cart.Items)
         {
@@ -38,24 +46,24 @@ public class PaymentService(IConfiguration config, ICartService cartService, /*I
 
         PaymentIntent? intent = null;
 
-        if(string.IsNullOrEmpty(cart.PaymentIntentId))
+        if (string.IsNullOrEmpty(cart.PaymentIntentId))
         {
-            var options = new PaymentIntentCreateOptions 
+            var options = new PaymentIntentCreateOptions
             {
-                Amount =total,
+                Amount = total,
                 Currency = "usd",
                 PaymentMethodTypes = ["card"]
             };
             intent = await services.CreateAsync(options);
-            cart.PaymentIntentId=intent.Id;
-            cart.ClientSecret=intent.ClientSecret;
+            cart.PaymentIntentId = intent.Id;
+            cart.ClientSecret = intent.ClientSecret;
         }
 
         else
         {
             var options = new PaymentIntentUpdateOptions
             {
-                Amount =total
+                Amount = total
             };
 
             intent = await services.UpdateAsync(cart.PaymentIntentId, options);
@@ -64,6 +72,19 @@ public class PaymentService(IConfiguration config, ICartService cartService, /*I
         await cartService.SetCartAsync(cart);
 
         return cart;
+    }
+
+    public async Task<string> RefundPayment(string paymentIntentId)
+    {
+        var reafundOptions = new RefundCreateOptions
+        {
+            PaymentIntent = paymentIntentId
+        };
+
+        var refundService = new RefundService();
+        var result = await refundService.CreateAsync(reafundOptions);
+
+        return result.Status;
     }
 
     private async Task<long> ApplyDiscountAsync(AppCoupon AppCoupon, long subTotal)

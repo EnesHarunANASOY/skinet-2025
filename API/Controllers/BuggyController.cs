@@ -33,7 +33,7 @@ public class BuggyController : BaseApiController
         throw new Exception("This is a test exception");
     }
 
-     [HttpPost("validationerror")]
+    [HttpPost("validationerror")]
     public IActionResult GetValidationError(CreateProductDto product)
     {
         return Ok();
@@ -46,7 +46,27 @@ public class BuggyController : BaseApiController
         var name = User.FindFirst(ClaimTypes.Name)?.Value;
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        return Ok("Hello " + name + ", your id is: " + id);  
+        return Ok("Hello " + name + ", your id is: " + id);
+    }
+    
+    [Authorize(Roles ="Admin")]
+    [HttpGet("admin-secret")]
+    public IActionResult GetAdminSecret()
+    {
+        var name = User.FindFirst(ClaimTypes.Name)?.Value;
+        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var isAdmin = User.IsInRole("Admin");
+        var role = User.FindFirstValue(ClaimTypes.Role);
+
+        return Ok(
+            new 
+            {
+                name,
+                id,
+                isAdmin,
+                role
+            }
+        );  
     }
 
 }
