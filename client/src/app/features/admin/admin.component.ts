@@ -1,9 +1,9 @@
 import {  Component, inject, OnInit, ViewChild } from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { Order } from '../../../shared/models/order';
+import { Order } from '../../shared/models/order';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { AdminService } from '../../../core/services/admin.service';
-import { OrderParams } from '../../../shared/models/orderParams';
+import { AdminService } from '../../core/services/admin.service';
+import { OrderParams } from '../../shared/models/orderParams';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatLabel, MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -11,7 +11,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatTabsModule} from '@angular/material/tabs';
 import { RouterLink } from '@angular/router';
-import { DialogService } from '../../../core/services/dialog.service';
+import { DialogService } from '../../core/services/dialog.service';
 
 @Component({
   selector: 'app-admin',

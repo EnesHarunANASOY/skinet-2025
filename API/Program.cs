@@ -28,7 +28,9 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
     var configuration = ConfigurationOptions.Parse(connString,true);
     return ConnectionMultiplexer.Connect(configuration);
 });
-builder.Services.AddSingleton<ICartService,CartService>();
+builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<StoreContext>();
@@ -37,6 +39,7 @@ builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
+
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(x=> x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
